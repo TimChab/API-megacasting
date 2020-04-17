@@ -1,4 +1,5 @@
 const express = require('express');
+<<<<<<< HEAD
 //const offers = require('./routes/offers');
 const allOffers = require('./bdd/getAllOffers');
 const offerById = require('./bdd/getOfferById');
@@ -13,6 +14,28 @@ app.use(express.json());
 
 //app.use('/', offers);
 //app.use('/offers', offers);
+=======
+const Joi = require('@hapi/joi');
+
+let app = new express();
+app.use(express.json());
+const connection = require('./bdd/connection');
+//const offers = require('./routes/offers');
+
+//offers
+const allOffers = require('./bdd/offers/getAllOffers');
+const offerById = require('./bdd/offers/getOfferById');
+const updateOffer = require('./bdd/offers/putOffer');
+const deleteOffer = require('./bdd/offers/deleteOffer');
+const newOffer = require('./bdd/offers/postOffer');
+ 
+//companies
+const allCompanies = require('./bdd/companies/getAllCompanies');
+const companiesById = require('./bdd/companies/getCompanieById');
+const newCompany = require('./bdd/companies/postCompany');
+const updateCompany = require('./bdd/companies/putCompany')
+const removeCompany = require('./bdd/companies/deleteCompany');
+>>>>>>> develop
 
 
 app
@@ -39,8 +62,12 @@ app
 
 
 app.post('/offers', function(req, res){
+<<<<<<< HEAD
     //console.log('on post la l\'offre '+ req.params.idPost +'après verifications');
 
+=======
+    
+>>>>>>> develop
     const schemaPut = Joi.object({
         tags : Joi.array().required(),
         intitule : Joi.string().max(255).min(5).required(),
@@ -55,6 +82,7 @@ app.post('/offers', function(req, res){
 
     });
 
+<<<<<<< HEAD
     //console.log(req.body);
         //const result = Joi.ValidationError
     // console.log(result.value);
@@ -62,6 +90,10 @@ app.post('/offers', function(req, res){
     console.log(result);
     /*res.status(200).send(result);
     const result = Joi.validate(req.body, schemaPut);*/
+=======
+    const result = schemaPut.validate(req.body);
+    console.log(result);
+>>>>>>> develop
 
     if (!result.error) {
         //console.log(result);
@@ -72,13 +104,20 @@ app.post('/offers', function(req, res){
 
     } else {
 
+<<<<<<< HEAD
     console.log(result.error);
+=======
+        console.log(result.error);
+>>>>>>> develop
         res.status(400).send(result.error.details);
     };
     
 
 });
+<<<<<<< HEAD
 //5e920d9180bf2fdad1b544f1
+=======
+>>>>>>> develop
 
 //On gère les différentes actions sur les offres de casting
 
@@ -94,7 +133,10 @@ app.get('/offers/:id', function(req, res) {
     
 app.put('/offers/:idPut', function(req, res){
     
+<<<<<<< HEAD
     //console.log('on put la l\'offre '+ req.params.idPut +' après verifications');
+=======
+>>>>>>> develop
     const schemaPut = Joi.object({
         tags : Joi.array().required(),
         intitule : Joi.string().max(255).min(5).required(),
@@ -109,6 +151,7 @@ app.put('/offers/:idPut', function(req, res){
 
     });
 
+<<<<<<< HEAD
     //console.log(req.body);
         //const result = Joi.ValidationError
     // console.log(result.value);
@@ -125,6 +168,16 @@ app.put('/offers/:idPut', function(req, res){
             .then((value)=> res.send(value))
             .catch(err=> console.log('err', err.message));
         //res.status(200).send(result.value);
+=======
+    const result = schemaPut.validate(req.body);
+    const id = req.params.idPut;
+  
+
+    if (!result.error) {
+        updateOffer.updateOffer(id, result)
+            .then((value)=> res.send(value))
+            .catch(err=> console.log('err', err.message));
+>>>>>>> develop
 
     } else {
 
@@ -132,6 +185,7 @@ app.put('/offers/:idPut', function(req, res){
         res.status(400).send(result.error.details);
     };
 
+<<<<<<< HEAD
 
 
 
@@ -161,6 +215,106 @@ app.delete('/offers/:idSuppr', function(req, res){
 
 });
 
+=======
+});
+
+app.delete('/offers/:idSuppr', function(req, res){
+   
+    const id = req.params.idSuppr;
+
+    deleteOffer.deleteOffer(id)
+        .then((value)=> res.status(200).send('L\'offre a bien été supprimée'))
+        .catch(err=> console.log('err', err.message));
+ 
+});
+
+
+//companies
+
+app.get('/companies', function(req, res) {
+    res.setHeader('Content-Type', 'application/json');
+    allCompanies.getAllCompanies()
+        .then((value)=> res.send(value))
+        .catch(err=> console.log('err', err.message));
+});
+
+
+app.get('/companies/:id', function(req, res) {
+    res.setHeader('Content-Type', 'application/json');
+    let id =  req.params.id;
+    
+    companiesById.getCompanyById(id)
+        .then((value)=> res.send(value))
+        .catch(err=> console.log('err', err.message));
+});
+
+
+app.post('/companies', function(req, res){
+    
+    const schemaPut = Joi.object({
+        name : Joi.string().max(20).min(3).required(),
+        email : Joi.string().required(),
+        tel : Joi.string().min(10).max(10),
+        siret : Joi.string().min(14).max(14)
+
+    });
+
+    const result = schemaPut.validate(req.body);
+    console.log(result);
+
+    if (!result.error) {
+        //console.log(result);
+        newCompany.createCompanie(result)
+            .then((value)=> res.send(value))
+            .catch(err=> console.log('err', err.message));
+        //res.status(200).send(result.value);
+
+    } else {
+
+        console.log(result.error);
+        res.status(400).send(result.error.details);
+    };
+    
+
+});
+
+app.put('/companies/:idPut', function(req, res){
+    
+    const schemaPut = Joi.object({
+        name : Joi.string().max(20).min(3).required(),
+        email : Joi.string().required(),
+        tel : Joi.string().min(10).max(10),
+        siret : Joi.string().min(14).max(14)
+
+    });
+
+    const result = schemaPut.validate(req.body);
+    const id = req.params.idPut;
+  
+
+    if (!result.error) {
+        updateCompany.updateCompany(id, result)
+            .then((value)=> res.send(value))
+            .catch(err=> console.log('err', err.message));
+
+    } else {
+
+    console.log(result.error);
+        res.status(400).send(result.error.details);
+    };
+
+});
+
+app.delete('/companies/:idSuppr', function(req, res){
+   
+    const id = req.params.idSuppr;
+
+    removeCompany.deleteCompany(id)
+        .then((value)=> res.status(200).send('La companie a bien été supprimée'))
+        .catch(err=> console.log('err', err.message));
+ 
+});
+>>>>>>> develop
 
 app.listen(8080, ()=>{
     console.log('Listenning on port 8080');
